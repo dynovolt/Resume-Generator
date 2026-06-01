@@ -11,6 +11,7 @@ export default function ChatPage() {
   const { apiKey, provider, completeInterview } = useAppStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isFinishing, setIsFinishing] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
     api: "/api/chat",
@@ -35,14 +36,26 @@ export default function ChatPage() {
   });
 
   useEffect(() => {
-    if (!apiKey) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && !apiKey) {
       router.push("/");
     }
-  }, [apiKey, router]);
+  }, [mounted, apiKey, router]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
+
+  if (!mounted) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-background gap-4">
+        <Loader2 className="w-10 h-10 animate-spin text-primary" />
+      </div>
+    );
+  }
 
   if (!apiKey || isFinishing) {
     return (

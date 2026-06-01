@@ -9,12 +9,17 @@ export default function OutputPage() {
   const router = useRouter();
   const { latexOutput, isInterviewComplete, resetInterview } = useAppStore();
   const [copied, setCopied] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    if (!isInterviewComplete || !latexOutput) {
+    setMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (mounted && (!isInterviewComplete || !latexOutput)) {
       router.push("/");
     }
-  }, [isInterviewComplete, latexOutput, router]);
+  }, [mounted, isInterviewComplete, latexOutput, router]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(latexOutput);
@@ -41,7 +46,7 @@ export default function OutputPage() {
     }
   };
 
-  if (!isInterviewComplete || !latexOutput) return null;
+  if (!mounted || !isInterviewComplete || !latexOutput) return null;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 sm:p-8 flex flex-col items-center">

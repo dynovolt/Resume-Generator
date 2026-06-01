@@ -10,14 +10,13 @@ export default function LandingPage() {
   const { apiKey, setApiKey, provider, setProvider } = useAppStore();
   
   const [inputKey, setInputKey] = useState("");
-  const [selectedProvider, setSelectedProvider] = useState<Provider>(provider || "gemini");
+  const [selectedProvider, setSelectedProvider] = useState<Provider>("gemini");
 
   useEffect(() => {
-    // If they already have an API key, we could auto-redirect, but we'll let them change it.
-    if (apiKey) {
-      setInputKey(apiKey);
-    }
-  }, [apiKey]);
+    // Sync store state after hydration to avoid SSR mismatch
+    if (apiKey) setInputKey(apiKey);
+    if (provider) setSelectedProvider(provider);
+  }, [apiKey, provider]);
 
   const handleStart = (e: React.FormEvent) => {
     e.preventDefault();
