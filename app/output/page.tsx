@@ -7,19 +7,14 @@ import { Check, Copy, Download, RefreshCcw, FileCode2, Info } from "lucide-react
 
 export default function OutputPage() {
   const router = useRouter();
-  const { latexOutput, isInterviewComplete, resetInterview } = useAppStore();
+  const { latexOutput, isInterviewComplete, resetInterview, _hasHydrated } = useAppStore();
   const [copied, setCopied] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted && (!isInterviewComplete || !latexOutput)) {
+    if (_hasHydrated && (!isInterviewComplete || !latexOutput)) {
       router.push("/");
     }
-  }, [mounted, isInterviewComplete, latexOutput, router]);
+  }, [_hasHydrated, isInterviewComplete, latexOutput, router]);
 
   const handleCopy = async () => {
     await navigator.clipboard.writeText(latexOutput);
@@ -46,7 +41,7 @@ export default function OutputPage() {
     }
   };
 
-  if (!mounted || !isInterviewComplete || !latexOutput) return null;
+  if (!_hasHydrated || !isInterviewComplete || !latexOutput) return null;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-950 p-4 sm:p-8 flex flex-col items-center">

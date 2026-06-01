@@ -8,12 +8,11 @@ import { Send, User, Bot, Loader2, ArrowRight } from "lucide-react";
 
 export default function ChatPage() {
   const router = useRouter();
-  const { apiKey, provider, completeInterview } = useAppStore();
+  const { apiKey, provider, completeInterview, _hasHydrated } = useAppStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isFinishing, setIsFinishing] = useState(false);
-  const [mounted, setMounted] = useState(false);
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
     api: "/api/chat",
     body: {
       provider,
@@ -36,20 +35,16 @@ export default function ChatPage() {
   });
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  useEffect(() => {
-    if (mounted && !apiKey) {
+    if (_hasHydrated && !apiKey) {
       router.push("/");
     }
-  }, [mounted, apiKey, router]);
+  }, [_hasHydrated, apiKey, router]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  if (!mounted) {
+  if (!_hasHydrated) {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-background gap-4">
         <Loader2 className="w-10 h-10 animate-spin text-primary" />
@@ -89,10 +84,8 @@ export default function ChatPage() {
                  I'll ask you a series of questions across 11 sections. Just answer naturally, and I'll format everything perfectly into an ATS-friendly layout.
                </p>
                <button 
-                 onClick={(e) => {
-                   const fakeEvent = { preventDefault: () => {} } as any;
-                   handleInputChange({ target: { value: "Hi, I'm ready to start." } } as any);
-                   setTimeout(() => handleSubmit(fakeEvent), 100);
+                 onClick={() => {
+                   append({ role: "user", content: "Hi, I'm ready to start." });
                  }}
                  className="bg-primary text-white px-8 py-4 rounded-xl font-medium shadow-lg hover:bg-primary/90 transition-all hover:-translate-y-1 active:scale-95 flex items-center gap-2 mx-auto"
                >

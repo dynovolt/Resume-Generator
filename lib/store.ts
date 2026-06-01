@@ -18,6 +18,8 @@ export interface AppState {
   completeInterview: (latexCode: string) => void;
   resetInterview: () => void;
   clearCredentials: () => void;
+  _hasHydrated: boolean;
+  setHasHydrated: (state: boolean) => void;
 }
 
 export const useAppStore = create<AppState>()(
@@ -37,11 +39,16 @@ export const useAppStore = create<AppState>()(
       completeInterview: (latexCode) => set({ isInterviewComplete: true, latexOutput: latexCode }),
       resetInterview: () => set({ currentStep: 1, chatHistory: [], isInterviewComplete: false, latexOutput: '' }),
       clearCredentials: () => set({ apiKey: '', provider: 'gemini' }),
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
     }),
     {
       name: 'ai-resume-storage',
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ apiKey: state.apiKey, provider: state.provider }), // Only persist API Key and Provider choice
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
     }
   )
 );
