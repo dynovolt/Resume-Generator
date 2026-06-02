@@ -11,7 +11,6 @@ export default function ChatPage() {
   const { apiKey, provider, completeInterview, _hasHydrated } = useAppStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isFinishing, setIsFinishing] = useState(false);
-
   const { messages, input, handleInputChange, handleSubmit, isLoading, append, error } = useChat({
     api: "/api/chat",
     body: {
@@ -147,11 +146,11 @@ export default function ChatPage() {
         <form onSubmit={handleSubmit} className="max-w-4xl mx-auto relative group">
           <textarea
             className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-2xl px-5 py-4 pr-16 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-all resize-none min-h-[60px] max-h-[200px] shadow-inner"
-            value={input}
-            onChange={handleInputChange}
             placeholder={messages.length === 0 ? "Click Start Interview to begin..." : "Type your answer here... (Shift+Enter for new line)"}
+            value={input}
             disabled={isLoading || isFinishing}
             rows={1}
+            onChange={handleInputChange}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
