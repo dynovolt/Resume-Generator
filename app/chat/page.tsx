@@ -12,7 +12,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [isFinishing, setIsFinishing] = useState(false);
 
-  const { messages, input, handleInputChange, handleSubmit, isLoading, append } = useChat({
+  const { messages, input, handleInputChange, handleSubmit, isLoading, append, error } = useChat({
     api: "/api/chat",
     body: {
       provider,
@@ -112,7 +112,7 @@ export default function ChatPage() {
             ))
           )}
           
-          {isLoading && (
+          {isLoading && !error && (
             <div className="flex gap-4 justify-start animate-in fade-in duration-300">
               <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center shrink-0 mt-1 shadow-sm border border-primary/20">
                 <Loader2 className="w-5 h-5 text-primary animate-spin" />
@@ -124,6 +124,18 @@ export default function ChatPage() {
                   <span className="w-1.5 h-1.5 rounded-full bg-primary/50 animate-bounce" style={{ animationDelay: '150ms' }} />
                   <span className="w-1.5 h-1.5 rounded-full bg-primary/50 animate-bounce" style={{ animationDelay: '300ms' }} />
                 </span>
+              </div>
+            </div>
+          )}
+
+          {error && (
+            <div className="bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 p-5 rounded-2xl border border-red-200 dark:border-red-900/50 mb-6 flex items-start gap-3 shadow-sm animate-in fade-in zoom-in duration-300">
+              <div>
+                <h3 className="font-semibold text-red-700 dark:text-red-400">Connection Error</h3>
+                <p className="text-sm mt-1 leading-relaxed">{error.message || "An unexpected error occurred while communicating with the AI. Please verify your API key is correct and has sufficient quota."}</p>
+                <button onClick={() => window.location.reload()} className="mt-3 text-xs bg-red-100 dark:bg-red-900/50 px-4 py-2 rounded-lg hover:bg-red-200 dark:hover:bg-red-900/80 font-medium transition-colors shadow-sm">
+                  Restart Interview
+                </button>
               </div>
             </div>
           )}

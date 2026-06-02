@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     }
 
     const result = await streamText({
-      model: model as any,
+      model: model,
       system: `${SYSTEM_PROMPT}\n\nTEMPLATE TO USE:\n\`\`\`latex\n${LATEX_TEMPLATE}\n\`\`\``,
       messages,
     });
